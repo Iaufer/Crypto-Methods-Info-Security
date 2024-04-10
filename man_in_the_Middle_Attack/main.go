@@ -3,11 +3,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"la/sdes"
-	"os"
-	"strconv"
 )
 
 func Equal(a1, a2 []uint8) bool {
@@ -39,102 +36,86 @@ func str_to_arr(p []string) ([]uint8, []uint8) {
 }
 
 func main() {
+	// m := []uint8{0, 1, 1, 1, 0, 0, 1, 0}
+	m := []uint8{0, 1, 1, 0, 0, 1, 0, 1}
 
-	// plaintextPairs := [][]string{
-	//     {"01100101", "00100010"},
-	//     {"10111010", "01101110"},
-	//     {"11011001", "10001110"},
-	//     {"01001011", "00011100"},
+
+	// k := []uint8{1, 0, 1, 0, 0, 0, 0, 0, 1, 0}
+	// k1 := []uint8{1, 1, 0, 1, 1, 0, 0, 1, 1, 1}
+
+	// dec1 := Encrypt(m, k) // false - шифрование, true - деш ифрвание
+	// fmt.Println("ШИФР 1 ключ: ", dec1)
+	// dec2 := Encrypt(dec1, k1)
+	// fmt.Println("Зашифр текст: ", dec2)
+
+	// res, res1 := MITM(m, dec2)
+	MITM(m, []uint8{0, 0, 1, 0, 0, 0, 1, 0})
+	// for i := 0; i < len(res); i++{
+	// 	k := Int_to_uint8(i)
+	// 	if Equal(k, []uint8{1, 0, 1, 0, 0, 0, 0, 0, 1, 0}){
+	// 		fmt.Println(res[i], "| ", k)
+	// 	}
 	// }
 
-	// _, _ := str_to_arr(plaintextPairs[1])
-
-	// m := []uint8{0, 1, 1, 1, 0, 0, 1, 0}
-	// k := []uint8{1, 0, 1, 0, 0, 0, 0, 0, 1, 0}
-
-	// dec := Encrypt(m, k) // false - шифрование, true - деш ифрвание
-	// fmt.Println(dec)
-
-	file, err := os.Open("text/plaintext.txt")
-	if err != nil {
-		fmt.Println("Ошибка открытия файла:", err)
-		return
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanRunes)
-
-	plaintext := make([][]uint8, 0)
-	key := []uint8{1, 0, 1, 0, 0, 0, 0, 0, 1, 0}
-	
-	for scanner.Scan() {
-		symbol := scanner.Bytes()
-		plain_chunk := str_to_arr_fi(symbol[0])
-		plaintext = append(plaintext, plain_chunk)
-	}
-
-
-	if err := scanner.Err(); err != nil{
-		fmt.Println("Ошибка при сканировании файла:", err)
-	}
-
-	cipher := Encrypt(plaintext, key)
-	fmt.Println(cipher)
-
-	in_file_encrypt(cipher)
+	// for i := 0; i < len(res1); i++{
+	// 	k := Int_to_uint8(i)
+	// 	if Equal(k, []uint8{1, 1, 0, 1, 1, 0, 0, 1, 1, 1}){
+	// 		fmt.Println(res1[i], k)
+	// 	}
+	// }
+	// fmt.Println(res[642], Int_to_uint8(642))
+	// fmt.Println(res1[871], Int_to_uint8(871))
 
 }
 
+func Int_to_uint8(n int) (res []uint8) {
+	mask := 512
 
-func in_file_encrypt(cipher [][]uint8){
-	bits := Decrypt(cipher[0], []uint8{1, 0, 1, 0, 0, 0, 0, 0, 1, 0})
-
-    // Преобразование среза битов в строку
-    var bitStr string
-    for _, bit := range bits {
-        bitStr += strconv.Itoa(int(bit))
-    }
-
-    // Преобразование строки битов в целое число
-    num, _ := strconv.ParseUint(bitStr, 2, 8) // 8 бит для ASCII
-
-    // Преобразование числа в символ ASCII
-    asciiChar := rune(num)
-
-    // Вывод символа ASCII
-    fmt.Println(string(asciiChar))
+	for i := 0; i < 10; i++ {
+		if mask&n != 0 {
+			res = append(res, 1)
+		} else {
+			res = append(res, 0)
+		}
+		mask >>= 1
+	}
+	return res
 }
 
-
-func Encrypt(plaintext [][]uint8, key []uint8) [][]uint8 {
-	cipher := make([][]uint8, 0)
-
-	for i := 0; i < len(plaintext); i++{
-		res := sdes.DES(plaintext[i], key, false)
-		cipher = append(cipher, res)
+func MITM(m, cf []uint8) (res [][]uint8, res_1 [][]uint8) {
+	for i := 0; i < (1 << 10); i++ {
+		res = append(res, Encrypt(m, Int_to_uint8(i)))
 	}
+	count := 0
 
-	return cipher
+	for i := 0; i < (1 << 10); i++ {
+		a := Decrypt(cf, Int_to_uint8(i))
+
+		for j := 0; j < len(res); j++ {
+			if Equal(a, res[j]) {
+				tmp := Encrypt(m, Int_to_uint8(i))
+				tmp1 := Encrypt(tmp, Int_to_uint8(j))
+
+				if Equal(cf, tmp1){
+					fmt.Println(cf, Int_to_uint8(i))
+					fmt.Println(tmp1, Int_to_uint8(j))
+					fmt.Println("######")
+					count++
+				}
+			}
+		}
+		// res_1 = append(res_1, Decrypt(cf, Int_to_uint8(i)))
+	}
+	fmt.Println("Отраб", count)
+	return res, res_1
+}
+
+func Encrypt(plaintext []uint8, key []uint8) []uint8 {
+	res := sdes.DES(plaintext, key, false)
+	return res
 }
 
 func Decrypt(plaintext, key []uint8) []uint8 {
 	res := sdes.DES(plaintext, key, true)
 	return res
-}
-
-func str_to_arr_fi(s byte, ) []uint8 {
-	mask := uint8(64)
-	tmp := []uint8{}
-
-	for i := 0; i < 8; i++{
-		if s&mask != 0{
-			tmp = append(tmp, 1)
-		}else{
-			tmp = append(tmp, 0)
-		}
-		mask = mask >> 1
-		
-	}
-	return tmp
 }
