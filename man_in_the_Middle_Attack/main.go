@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 	"la/sdes"
+	"time"
 )
 
 func Equal(a1, a2 []uint8) bool {
@@ -53,33 +54,119 @@ func RES(keys [][]int, arr []Data, i int) ([][]int, []Data, int) {
 	return RES(n_keys, arr, i+1)
 }
 
-func main() {
+// func Encrypt_in_file(k1, k2 []uint8) {
+// 	file, err := os.Open("text/plaintext.txt")
+// 	if err != nil {
+// 		fmt.Println("Error opening file: ", err)
+// 		return
+// 	}
 
-	// dataMap := map[string][]uint8{
-	// 	//открытый текст : зашифрованный
-	// 	// "01100101": []uint8{0, 0, 0, 0, 0, 1, 0, 1},
-	// 	"10100101": []uint8{1, 0, 0, 1, 0, 0, 1, 1},
-	// 	"01000101": []uint8{0, 1, 1, 1, 0, 0, 1, 1},
-	// 	"11001000": []uint8{0, 0, 0, 1, 1, 0, 1, 1},
-	// 	"10010111": []uint8{0, 1, 0, 1, 0, 0, 1, 1},
-	// }
+// 	defer file.Close()
+
+// 	buffer := make([]byte, 1)
+// 	for {
+// 		_, err := file.Read(buffer)
+// 		if err != nil {
+// 			fmt.Println("The file has been read!")
+// 			break
+// 		}
+// 		sym := inttouint88(int(buffer[0]))
+
+// 		// fmt.Println(string(buffer[0]), sym)
+// 		tmp := Encrypt(sym, k1)
+// 		tmp = Encrypt(tmp, k2)
+
+// 		Symbol_to_file(tmp, "text/encrypt.txt")
+
+// 		// break
+// 	}
+// }
+
+// func Decrypt_in_file(k2, k1 []uint8) {
+// 	file, err := os.Open("text/encrypt.txt")
+// 	if err != nil {
+// 		fmt.Println("Error opening file: ", err)
+// 		return
+// 	}
+
+// 	defer file.Close()
+
+// 	buffer := make([]byte, 1)
+// 	for {
+// 		_, err := file.Read(buffer)
+// 		if err != nil {
+// 			fmt.Println("The file has been read!")
+// 			break
+// 		}
+
+// 		sym := inttouint88(int(buffer[0]))
+
+// 		fmt.Println(string(buffer[0]), sym)
+// 		tmp := Decrypt(sym, k1)
+// 		tmp = Decrypt(tmp, k2)
+
+// 		fmt.Println(tmp)
+
+// 		Symbol_to_file(tmp, "text/decrypt.txt")
+
+// 		// break
+// 	}
+// }
+
+// func Symbol_to_file(sym []uint8, path string) {
+// 	file, err := os.OpenFile(path, os.O_WRONLY|os.O_APPEND, 0644)
+
+// 	if err != nil {
+// 		fmt.Println("Ошибка открытия файла:", err)
+// 		return
+// 	}
+
+// 	defer file.Close()
+// 	str := ""
+// 	for i := 0; i < len(sym); i++ {
+// 		if sym[i] == 1 {
+// 			str += "1"
+// 		} else {
+// 			str += "0"
+// 		}
+// 	}
+// 	num, err := strconv.ParseInt(str, 2, 8)
+
+// 	_, err = file.WriteString(string(num))
+
+// 	if err != nil {
+// 		fmt.Println("Ошибка записи в файл:", err)
+// 		return
+// 	}
+
+// }
+
+// func inttouint88(n int) (res []uint8) {
+// 	mask := 128
+
+// 	for i := 0; i < 8; i++ {
+// 		if mask&n != 0 {
+// 			res = append(res, 1)
+// 		} else {
+// 			res = append(res, 0)
+// 		}
+// 		mask >>= 1
+// 	}
+// 	return res
+// }
+
+func main() {
+	k1 := []uint8{1, 0, 1, 0, 0, 0, 0, 0, 1, 0}
+	k2 := []uint8{1, 1, 0, 1, 1, 0, 0, 1, 1, 1}
+
 
 	dataMap := map[string][]uint8{
 		//открытый текст : зашифрованный
-		// "01100101": []uint8{0, 0, 0, 0, 0, 1, 0, 1},
-		"10011001": []uint8{1, 0, 1, 0, 1, 0, 1, 1},
-		"10001010": []uint8{0, 0, 1, 1, 1, 1, 1, 0},
-		"01010111": []uint8{0, 1, 0, 0, 0, 1, 0, 1},
+		"10100101": Encrypt(Encrypt([]uint8{1,0,1,0,0,1,0,1}, k1), k2),
+		"01000101": Encrypt(Encrypt([]uint8{0,1,0,0,0,1,0,1}, k1), k2),
+		"11001000": Encrypt(Encrypt([]uint8{1,1,0,0,1,0,0,0}, k1), k2),
+		"10010111": Encrypt(Encrypt([]uint8{1,0,0,1,0,1,1,1}, k1), k2),
 	}
-	// KEY1 = '1010101010'
-	// KEY2 = '1111011011'
-	// a := []uint8{1,0,1,0,1,1,1,1}
-	k := []uint8{1, 0, 1, 0, 1, 0, 1, 0, 1, 0}
-	k1 := []uint8{0, 1, 0, 1, 0, 1, 0, 0, 1, 1}
-
-	// q := Encrypt(a, k)
-	// q = Encrypt(q, k1)
-	// fmt.Println(q)
 
 	arr := []Data{}
 
@@ -91,31 +178,24 @@ func main() {
 		arr = append(arr, pair)
 	}
 
-	//res, _ :=
-	// keys, _ := MITM([]uint8{0, 1, 1, 0, 0, 1, 0, 1}, []uint8{0, 0, 0, 0, 0, 1, 0, 1})
-	keys, _ := MITM([]uint8{1, 0, 1, 0, 1, 1, 1, 1}, []uint8{1, 0, 1, 1, 1, 1, 0, 1})
+	start := time.Now()
+
+	keys, _ := MITM([]uint8{0,0,0,0,0,1,0,1}, Encrypt(Encrypt([]uint8{0,0,0,0,0,1,0,1}, k1), k2))
 
 	res, _, _ := RES(keys, arr, 0)
-	// fmt.Println("-------")
-	// fmt.Println(Int_to_uint8(res[0][0]))
-	// fmt.Println(Int_to_uint8(res[0][1]))
-	// fmt.Println("-------")
-	// fmt.Println(Int_to_uint8(res[1][0]))
-	// fmt.Println(Int_to_uint8(res[1][1]))
+
+	el := time.Since(start)
 
 	for i := 0; i < len(res); i++ {
 		fmt.Println(Int_to_uint8(res[i][0]))
 		fmt.Println(Int_to_uint8(res[i][1]))
 		fmt.Println("-------")
 	}
+
 	fmt.Println(len(res))
 
-	if Equal(Int_to_uint8(res[0][0]), k) && Equal(Int_to_uint8(res[0][1]), k1) {
-		fmt.Println("Succes")
-	}
-
-	// k := []uint8{1, 0, 1, 0, 0, 0, 0, 0, 1, 0}
-	// k1 := []uint8{1, 1, 0, 1, 1, 0, 0, 1, 1, 1}
+	fmt.Println("Time to work: ", el.Seconds())
+	
 }
 
 func Int_to_uint8(n int) (res []uint8) {
