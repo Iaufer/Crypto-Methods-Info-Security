@@ -87,29 +87,109 @@ func print_res(res []int){
 }
 
 func main(){
-
 	// m := []int{bin_to_dec("110"), bin_to_dec("011"), bin_to_dec("110")} // верный
 	// m := []int{bin_to_dec("111"), bin_to_dec("111"), bin_to_dec("011")} // второй блок не верный
 	// m := []int{bin_to_dec("000"), bin_to_dec("111"), bin_to_dec("010")} // второй блок не верный
 	// m := []int{bin_to_dec("011"), bin_to_dec("100"), bin_to_dec("000")} // верный
-	m := []int{bin_to_dec("100"), bin_to_dec("111"), bin_to_dec("010")} // второй блок не верный // теперь все примеры правильные
-
-
-
-
+	// m := []int{bin_to_dec("100"), bin_to_dec("111"), bin_to_dec("010")} // второй блок не верный // теперь все примеры правильные
+	// // k := []int{bin_to_dec("111"), bin_to_dec("010"), bin_to_dec("001")}
 	// k := []int{bin_to_dec("111"), bin_to_dec("010"), bin_to_dec("001")}
-	k := []int{bin_to_dec("111"), bin_to_dec("010"), bin_to_dec("001")}
+	// res := SPN_net(m, k)
+	// fmt.Println(res)
+	// print_res(res)
 
-	
-	res := SPN_net(m, k)
-	fmt.Println(res)
-	print_res(res)
 
-	table := build_table()
 
+
+	A := []int{bin_to_dec("110"), bin_to_dec("000"), bin_to_dec("000")}
+
+	analysis(A)
+
+}
+
+
+func analysis(A []int){
+	table, _ := build_table(), 0
+	tmp_A := []int{}
+
+	for _, el := range A{
+		for k := 0; k < len(table); k++{
+			if el == k{
+				for i := 0; i < len(table[k]); i++{
+					if table[k][i] == 8{
+						tmp_A = append(tmp_A, i)
+					}
+				}
+			}
+		}
+	}
+
+	//second round
+	m_var := []int{}
+	for _, el := range tmp_A{
+		for k := 0; k < len(table); k++{
+			if el == k{
+				for i := 0; i < len(table[k]); i++{
+					if table[k][i] == 4{
+						m_var = append(m_var, i)
+						// fmt.Println(i)
+						// tmp_A = append(tmp_A, i)
+					}else if table[k][i] == 8{
+						// fmt.Println(i)
+					}
+				}
+			}
+		}
+	}
+
+	// print_res(tmp_A)
 	for _, arr := range table{
 		fmt.Println(arr)
 	}
+	// fmt.Println(m_var)
+
+
+	arr1 := []int{m_var[0], A[1], A[2]}
+	arr2 := []int{m_var[1], A[1], A[2]}
+
+
+	arr1_perm := []int{((arr1[0]&4)) | ((arr1[1]&4) >> 1) | (arr1[2]&4 >> 2), ((arr1[0]&2) << 1) | ((arr1[1]&2)) | (arr1[2]&2 >> 1), ((arr1[0]&1) << 2) | ((arr1[1]&1) << 1) | (arr1[2]&1)}
+	arr2_perm := []int{((arr2[0]&4)) | ((arr2[1]&4) >> 1) | (arr2[2]&4 >> 2), ((arr2[0]&2) << 1) | ((arr2[1]&2)) | (arr2[2]&2 >> 1), ((arr2[0]&1) << 2) | ((arr2[1]&1) << 1) | (arr2[2]&1)}
+
+	// print_res(arr1_perm)
+	// print_res(arr2_perm)
+	
+	// X := []int{bin_to_dec("100"), bin_to_dec("111"), bin_to_dec("010")}
+	Y := []int{bin_to_dec("111"), bin_to_dec("011"), bin_to_dec("110")}
+	// XI := []int{bin_to_dec("010"), bin_to_dec("111"), bin_to_dec("010")}
+	YI := []int{bin_to_dec("110"), bin_to_dec("011"), bin_to_dec("011")}
+
+	_Y := xor(Y, YI)
+	fmt.Println("-----")
+	a_arr := []int{}
+	for _, el := range _Y{
+		for k := 0; k < len(table); k++{
+			if el == k{
+				for i := 0; i < len(table[k]); i++{
+					if table[i][k] == 4{
+						a_arr = append(a_arr, i)
+						// m_var = append(m_var, i)
+						// fmt.Println(i)
+						// tmp_A = append(tmp_A, i)
+					}else if table[k][i] == 8{
+						fmt.Println(k, "8")
+					}
+				}
+			}
+		}
+	}
+
+	// print_res(_Y)
+	print_res(a_arr)
+	print_res(arr1_perm)
+	print_res(arr2_perm)
+
+	
 
 }
 
