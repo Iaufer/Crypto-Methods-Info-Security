@@ -92,11 +92,13 @@ func main() {
 	// res := SPN_net(m, k)
 	// fmt.Println(res)
 	// print_res(res)
-
-	k := []int{bin_to_dec("001"), bin_to_dec("010"), bin_to_dec("011")} // верный
 	m := []int{bin_to_dec("100"), bin_to_dec("101"), bin_to_dec("110")}
+	k := []int{bin_to_dec("001"), bin_to_dec("010"), bin_to_dec("011")} // верный
 
-	fmt.Println(SPN_net(m, k))
+	print_res(m)
+	print_res(k)
+	print_res(SPN_net(m, k))
+	// fmt.Println(SPN_net(m, k))
 
 	// A := []int{bin_to_dec("110"), bin_to_dec("000"), bin_to_dec("000")}
 
