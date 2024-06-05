@@ -11,7 +11,7 @@ def encoding(key,plaintext,sbox):
 	for i in range(3): #замена
 		index=int((str(ciphertext[i*3])+str(ciphertext[i*3+1])+str(ciphertext[i*3+2])),base=2)
 		new_value=sbox[index] #замена для i-го блока
-		print(index, new_value)
+		# print(index, new_value)
 		for j in range(3):
 			ciphertext[i*3+j]=new_value[j]
 			# print(ciphertext)
@@ -69,7 +69,7 @@ def analysis(sbox):
     random.seed()
     x_list=[] # открытый текст
     y_list=[]
-    for i in range(1000):
+    for i in range(10000):
         x_int=random.randrange(512) #генерируем int, который влезает в 9 бит
         x = f"{x_int:09b}"
         x = str_to_list(x)
@@ -89,7 +89,7 @@ def analysis(sbox):
 def calc(x, y):
     sum = 0
     for i in  range(len(x)):
-        xy = y[i][7] ^ y[i][8] ^ x[i][8]
+        xy = y[i][0] ^ y[i][1] ^  x[i][0] ^ x[i][1]
         if xy == 0:
             sum = sum + 1
     return sum

@@ -82,12 +82,11 @@ func print_res(res []int) {
 	fmt.Println()
 }
 
-
 func analysis() {
 	x_list := make([][]int, 0)
 	y_list := make([][]int, 0)
 
-	for i := 0; i < 1000; i++{
+	for i := 0; i < 10000; i++ {
 		x1 := rand.Intn(8)
 		x2 := rand.Intn(8)
 		x3 := rand.Intn(8)
@@ -105,20 +104,240 @@ func analysis() {
 	calc(x_list, y_list)
 }
 
-func calc(x, y [][]int){
+func six_equ(i int, x, y [][]int) int {
+	var y1, y2, x1 int
+	if (y[i][2] & 2) != 0 {
+		y1 = 1
+	} else {
+		y1 = 0
+	}
+
+	if (y[i][2] & 1) != 0 {
+		y2 = 1
+	} else {
+		y2 = 0
+	}
+
+	if (x[i][2] & 1) != 0 {
+		x1 = 1
+	} else {
+		x1 = 0
+	}
+
+	return (y1 ^ y2 ^ x1)
+}
+
+func five_equ(i int, x, y [][]int) int {
+	// xy := (y[i][0]&2) ^ (x[i][0]&4) // пятое уравнение
+
+	var y1, x1 int
+
+	if (y[i][0] & 2) != 0 {
+		y1 = 1
+	} else {
+		y1 = 0
+	}
+
+	if (x[i][0] & 4) != 0 {
+		x1 = 1
+	} else {
+		x1 = 0
+	}
+
+	return (y1 ^ x1)
+}
+
+func four_equ1(i int, x, y [][]int) int {
+	var y1, x1 int
+
+	if (y[i][1] & 1) != 0 {
+		y1 = 1
+	} else {
+		y1 = 0
+	}
+
+	if (x[i][0] & 1) != 0 {
+		x1 = 1
+	} else {
+		x1 = 0
+	}
+
+	return (y1 ^ x1)
+}
+
+func four_equ2(i int, x, y [][]int)(int){
+	var y1, x1, y2 int
+	if (y[i][1] & 1) != 0 {
+		y1 = 1
+	} else {
+		y1 = 0
+	}
+
+	if (y[i][1] & 2) != 0{
+		y2 = 1
+	} else {
+		y2 = 0
+	}
+
+	if (x[i][0]&1) != 0{
+		x1 = 1
+	} else {
+		x1 = 0
+	}
+
+	return (y1 ^ y2 ^ x1)
+}
+
+func four_equ3(i int, x, y [][]int) int {
+	var y1, x1, y2 int
+
+	if (y[i][1] & 4) != 0 {
+		y1 = 1
+	} else {
+		y1 = 0
+	}
+
+	if (y[i][1] & 1) != 0 {
+		y2 = 1
+	} else {
+		y2 = 0
+	}
+
+	if (x[i][0] & 1) != 0 {
+		x1 = 1
+	} else {
+		x1 = 0
+	}
+
+	return (y1 ^ y2 ^ x1)
+}
+
+func three_equ(i int, x, y [][]int) int {
+	var y1, y2, x1, x2 int
+
+	if (y[i][2]&4) != 0 {
+		y1 = 1
+	} else {
+		y1 = 0
+	}
+
+	if (y[i][2]&2) != 0 {
+		y2 = 1
+	} else {
+		y2 = 0
+	}
+
+	if (x[i][2]&4) != 0 {	
+		x1 = 1
+	} else {
+		x1 = 0
+	}
+
+	if (x[i][2]&2) != 0 {
+		x2 = 1
+	} else {
+		x2 = 0
+	}
+
+	return (y1 ^ y2 ^ x1 ^ x2)
+}
+
+func two_equ(i int, x, y [][]int) int {
+	var y1, y2, x1, x2 int
+
+	if (y[i][1]&4) != 0 {
+		y1 = 1
+	} else {
+		y1 = 0
+	}
+
+	if (y[i][1]&2) != 0 {
+		y2 = 1
+	} else {
+		y2 = 0
+	}
+
+	if (x[i][1]&4) != 0 {
+		x1 = 1
+	} else {
+		x1 = 0
+	}
+
+	if (x[i][1]&2) != 0 {
+		x2 = 1
+	} else {
+		x2 = 0
+	}
+
+	return (y1 ^ y2 ^ x1 ^ x2)
+}
+
+func one_equ(i int, x, y [][]int) int {
+	var y1, y2, x1, x2 int
+
+	if (y[i][0]&4) != 0 {
+		y1 = 1
+	} else {
+		y1 = 0
+	}
+
+	if (y[i][0]&2) != 0 {
+		y2 = 1
+	} else {
+		y2 = 0
+	}
+
+	if (x[i][0]&4) != 0 {
+		x1 = 1
+	} else {
+		x1 = 0
+	}
+
+	if (x[i][0]&2) != 0 {
+		x2 = 1
+	} else {
+		x2 = 0
+	}
+
+	return (y1 ^ y2 ^ x1 ^ x2)
+}
+
+func calc(x, y [][]int) {
 	count := 0
-	for i := 0; i < len(x); i++{
+
+	for i := 0; i < len(x); i++ {
 		// xy := (y[i][0] & 4) ^ (y[i][0]&2) ^ (x[i][0]&4) ^ (x[i][0]&2)  //первое уравнение
 
 		// xy := (y[i][1] & 4) ^ (y[i][1] & 2) ^ (x[i][1] & 4) ^ (x[i][1] & 2) //второе уравнение
 
 		// xy := (y[i][2] & 4) ^ (y[i][2] & 2) ^ (x[i][2] & 4) ^ (x[i][2] & 2) //третье уравнение
+
+		// xy := (y[i][2]&2) ^ (y[i][2]&1) ^ (x[i][2]&1)// шестое уравнение
 		
-		// xy := (y[i][2] & 2) ^ (y[i][2] & 1) ^ (x[i][2] & 1) // шестое уравнение
+		//Первое уравнение
+		// xy := one_equ(i, x, y)
 
-		xy := (y[i][0]&2) ^ (x[i][0]&4) // пятое уравнение
+		//второе уравнение
+		// xy := two_equ(i, x, y)
+		
+		//третье уравнение
+		// xy := three_equ(i, x, y)
+		
+		//первое четвертое уравнение
+		// xy := four_equ1(i, x, y)
+		//второе четвертое уравнение
+		// xy := four_equ2(i, x, y)
+		//третье четвертое уравнение
+		// xy := four_equ3(i, x, y)
 
-		if xy == 0{
+
+		//пятое уравнение
+		xy := five_equ(i, x, y)
+
+		//шестое уравнение
+		// xy := six_equ(i, x, y)
+
+		if xy == 0 {
 			count = count + 1
 		}
 	}
