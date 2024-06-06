@@ -94,7 +94,9 @@ func analysis() {
 		x := []int{x1, x2, x3}
 
 		x_list = append(x_list, x)
-		y_list = append(y_list, SPN_net(x, []int{bin_to_dec("001"), bin_to_dec("010"), bin_to_dec("011")}))
+		y_list = append(y_list, SPN_net(x, []int{bin_to_dec("111"), bin_to_dec("010"), bin_to_dec("011")}))
+
+		// y_list = append(y_list, SPN_net(x, []int{bin_to_dec("001"), bin_to_dec("010"), bin_to_dec("011")}))
 	}
 
 	// for _, row := range x_list {
@@ -306,16 +308,8 @@ func calc(x, y [][]int) {
 	count := 0
 
 	for i := 0; i < len(x); i++ {
-		// xy := (y[i][0] & 4) ^ (y[i][0]&2) ^ (x[i][0]&4) ^ (x[i][0]&2)  //первое уравнение
-
-		// xy := (y[i][1] & 4) ^ (y[i][1] & 2) ^ (x[i][1] & 4) ^ (x[i][1] & 2) //второе уравнение
-
-		// xy := (y[i][2] & 4) ^ (y[i][2] & 2) ^ (x[i][2] & 4) ^ (x[i][2] & 2) //третье уравнение
-
-		// xy := (y[i][2]&2) ^ (y[i][2]&1) ^ (x[i][2]&1)// шестое уравнение
-		
 		//Первое уравнение
-		// xy := one_equ(i, x, y)
+		xy := one_equ(i, x, y)
 
 		//второе уравнение
 		// xy := two_equ(i, x, y)
@@ -332,13 +326,29 @@ func calc(x, y [][]int) {
 
 
 		//пятое уравнение
-		xy := five_equ(i, x, y)
+		// xy := five_equ(i, x, y)
 
 		//шестое уравнение
 		// xy := six_equ(i, x, y)
 
 		if xy == 0 {
 			count = count + 1
+		}
+	}
+	var p, q float64 = 0.25, 0.5
+
+
+	if count > (10000/2){
+		if p > q{
+			fmt.Println("Левая часть равна: ", 0)
+		}else if p < q{
+			fmt.Println("Левая часть равна: ", 1)
+		}
+	}else if count < (10000/2){
+		if p < q{
+			fmt.Println("Левая часть равна: ", 0)
+		}else if p > q{
+			fmt.Println("Левая часть равна: ", 1)
 		}
 	}
 
